@@ -8,12 +8,6 @@ public enum Operand {
 	DIVIDE("/"),
 	MODULO("mod"),
 	EXPONENT("^"),
-	SINE("sin()"),
-	COSINE("cos()"),
-	TANGENT("tan()"),
-	ASINE("asin()"),
-	ACOSINE("acos()"),
-	ATANGENT("atan()"),
 	CLEAR("C"),
 	CLEARENTRY("CE");
 	

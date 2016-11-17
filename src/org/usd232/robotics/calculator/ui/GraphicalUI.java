@@ -2,8 +2,10 @@ package org.usd232.robotics.calculator.ui;
 
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -28,17 +30,27 @@ public class GraphicalUI implements IUI {
 	private GridLayout layout;
 
 	private Operand op;
+	
+	private Font textFont = new Font("Arial", Font.PLAIN, 20);
+	private Font buttonFont = new Font("Arial", Font.PLAIN, 26);
+	
+	private Color windowBgColor = new Color(0, 0, 0);
+	private Color textBgColor = new Color(31, 31, 31);
+	private Color textFgColor = new Color(0, 255, 0);
+	private Color buttonBgColor = new Color(31, 31, 31);
+	private Color buttonFgColor = new Color(255, 0, 0);
 
 	@Override
 	public void init() {
-		layout = new GridLayout(12, 3);
+		layout = new GridLayout(7, 3);
 		layout.setHgap(5);
 		layout.setVgap(5);
 
 		window = new Frame("Calculator");
-		window.setLayout(layout);
-		window.setLocation(100, 100);
-		window.setBackground(new Color(0, 0, 255));
+		window.setLayout(null);
+		window.setBounds(100, 100, 230, 395);
+		window.setBackground(windowBgColor);
+		window.setResizable(false);
 		window.setVisible(true);
 		window.addWindowListener(new WindowAdapter() {
 			@Override
@@ -48,14 +60,25 @@ public class GraphicalUI implements IUI {
 		});
 
 		TextField num = new TextField();
-		num.setBounds(20, 40, 180, 30);
+		num.setBounds(15, 40, 200, 30);
+		num.setFont(textFont);
+		num.setBackground(textBgColor);
+		num.setForeground(textFgColor);
 		num.setEditable(false);
 		num.setFocusable(false);
 		window.add(num);
 
-		for (int i = 0; i < 10; i++) {
-			Button b = new Button(String.valueOf(i));
-			window.add(b);
+		Panel buttons = new Panel();
+		buttons.setBounds(15, 80, 201, 300);
+		buttons.setLayout(layout);
+		window.add(buttons);
+		
+		for (int i = 0; i < 11; i++) {
+			Button b = new Button(i == 10 ? "." : String.valueOf(i));
+			b.setFont(buttonFont);
+			b.setBackground(buttonBgColor);
+			b.setForeground(buttonFgColor);
+			buttons.add(b);
 			b.addActionListener((ActionEvent e) -> {
 				val1 += b.getLabel();
 				num.setText(val1);
@@ -64,7 +87,10 @@ public class GraphicalUI implements IUI {
 
 		for (Operand o : Operand.values()) {
 			Button b = new Button(o.getName());
-			window.add(b);
+			b.setFont(buttonFont);
+			b.setBackground(buttonBgColor);
+			b.setForeground(buttonFgColor);
+			buttons.add(b);
 			b.addActionListener((ActionEvent e) -> {
 				if (val2.equals("")) {
 					val2 = val1;
@@ -78,17 +104,20 @@ public class GraphicalUI implements IUI {
 		}
 
 		Button equals = new Button("=");
-		window.add(equals);
+		equals.setFont(buttonFont);
+		equals.setBackground(buttonBgColor);
+		equals.setForeground(buttonFgColor);
+		buttons.add(equals);
 		equals.addActionListener((ActionEvent e) -> {
 			if (val2.equals("")) {
 				num.setText(val1);
 			} else {
 				val1 = String.valueOf(ServiceManager.getService().calculate(op, Double.valueOf(val1), Double.valueOf(val2)));
 				num.setText(val1);
+				val1 = "";
+				val2 = "";
 			}
 		});
-
-		window.pack();
 	}
 
 	@Override

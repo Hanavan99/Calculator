@@ -3,15 +3,12 @@ package org.usd232.robotics.calculator.service;
 import java.util.Scanner;
 
 import org.usd232.robotics.calculator.calculator.Operand;
-import org.usd232.robotics.calculator.main.Config;
 
 public class ServiceImpl implements IService {
 
-	private final Config cfg;
 	private final Scanner scanner;
 
-	public ServiceImpl(Config cfg) {
-		this.cfg = cfg;
+	public ServiceImpl() {
 		scanner = new Scanner(System.in);
 	}
 
@@ -23,12 +20,16 @@ public class ServiceImpl implements IService {
 			switch (o) {
 			case ADD:
 				return args[0] + args[1];
+			case SUBTRACT:
+				return args[0] - args[1];
 			case MULTIPLY:
 				return args[0] * args[1];
 			case DIVIDE:
 				return args[0] / args[1];
-			case SINE:
-				return Math.sin(args[0]);
+			case EXPONENT:
+				return Math.pow(args[0], args[1]);
+			case MODULO:
+				return args[0] % args[1];
 			default:
 				return 0;
 			}
@@ -41,12 +42,12 @@ public class ServiceImpl implements IService {
 	}
 
 	@Override
-	public void printToConsole(String result) {
+	public void printResultToConsole(String result) {
 		System.out.println("Computed answer: " + result);
 	}
 
 	@Override
-	public void printResultToConsole(String text) {
+	public void printToConsole(String text) {
 		System.out.println(text);
 	}
 

@@ -1,6 +1,9 @@
 package org.usd232.robotics.calculator.ui;
 
+import java.util.Arrays;
+
 import org.usd232.robotics.calculator.calculator.Operand;
+import org.usd232.robotics.calculator.service.IService;
 import org.usd232.robotics.calculator.service.ServiceManager;
 
 /**
@@ -12,84 +15,99 @@ import org.usd232.robotics.calculator.service.ServiceManager;
  */
 public class ConsoleUI implements IUI {
 
-	boolean exit = false;
-	String val1 = "", val2 = "";
-	double total;
-	Operand o;
-	
+	private boolean exit = false;
+	private Operand o;
+	private String[] operands = new String[] {"+", "-", "*", "/", "^", "mod"};
+
 	@Override
 	public void init() {
-		ServiceManager.getService().printToConsole("Welcome to our calculator!\r\nPlease enter an equation to process.");
+		// Get the service and store it to a variable for ease of access
+		IService svc = ServiceManager.getService();
+		svc.printToConsole("Welcome to our calculator!\r\nPlease enter an equation to process.");
+
+		// Start looping
 		while (exit == false) {
-			String data = ServiceManager.getService().getConsoleInput();
-			String[] parseddata = data.split(" ");
-			for (String subdata : parseddata) {
+			// Define variables
+			String val1 = "", val2 = "", operand = "";
+			
+			// Get first value and cleanse
+			boolean gtg = false;
+			while (gtg == false) {
+				svc.printToConsole("Enter first value:");
+				val1 = svc.getConsoleInput();
 				try {
-					Double.parseDouble(subdata);
-					
-					if (val1.equals("")) {
-						val1 = subdata;
-						System.out.println("Set val1");
-					} else if (val2.equals("")) {
-						val2 = subdata;
-						System.out.println("Set val2");
-					} else {
-						System.out.println("Did nothing");
-					}
+					Double.parseDouble(val1);
+					gtg = true;
 				} catch (NumberFormatException e) {
-					
-					if (o != null && !val1.equals("") && !val2.equals("")) {
-						calculate();
-					} else {
-						switch (subdata) {
-						case "=":
-							calculate();
-							break;
-						case "+":
-							o = Operand.ADD;
-							break;
-						case "-":
-							o = Operand.SUBTRACT;
-							break;
-						case "*":
-							o = Operand.MULTIPLY;
-							break;
-						case "/":
-							o = Operand.DIVIDE;
-							break;
-						case "sin":
-							o = Operand.SINE;
-							break;
-						}
-						System.out.println("Set operand");
-					}
-					
+					svc.printToConsole("Not a valid number!");
 				}
 			}
-			ServiceManager.getService().printResultToConsole(String.valueOf(total));
-			total = 0;
-			val1 = "";
-			val2 = "";
+
+			// Get second value
+			gtg = false;
+			while (gtg == false) {
+				svc.printToConsole("Enter second value:");
+				val2 = svc.getConsoleInput();
+				try {
+					Double.parseDouble(val2);
+					gtg = true;
+				} catch (NumberFormatException e) {
+					svc.printToConsole("Not a valid number!");
+				}
+			}
+
+			// Get operand
+			gtg = false;
+			while (!gtg) {
+				svc.printToConsole("Enter operand:");
+				operand = svc.getConsoleInput();
+				if (!Arrays.asList(operands).contains(operand)) {
+					svc.printToConsole("Not a valid operand!");
+				} else {
+					gtg = true;
+				}
+			}
+
+			// Figure out which operand they gave
+			switch (operand) {
+				case "+" :
+					o = Operand.ADD;
+					break;
+				case "-" :
+					o = Operand.SUBTRACT;
+					break;
+				case "*" :
+					o = Operand.MULTIPLY;
+					break;
+				case "/" :
+					o = Operand.DIVIDE;
+					break;
+				case "^" :
+					o = Operand.EXPONENT;
+					break;
+				case "mod" :
+					o = Operand.MODULO;
+					break;
+			}
+
+			// Convert strings to doubles
+			double num1 = Double.valueOf(val1);
+			double num2 = Double.valueOf(val2);
+
+			// Find and print the result
+			svc.printResultToConsole(String.valueOf(svc.calculate(o, num1, num2)));
+			
+			// Ask if they want to do another calculation
+			svc.printToConsole("Do you want to do another calculation?");
+			if (!svc.getConsoleInput().toLowerCase().contains("y")) {
+				exit = true;
+			}
 		}
 	}
 
 	@Override
 	public void shutdown() {
-		
-	}
-	
-	private void calculate() {
-		if (val1.equals("")) {
-			val1 = "0";
-		}
-		if (val2.equals("")) {
-			val2 = "0";
-		}
-		total += ServiceManager.getService().calculate(o, Double.valueOf(val1), Double.valueOf(val2));
-		o = null;
-		val1 = "";
-		val2 = "";
-		System.out.println("Computed result");
+
 	}
 
 }

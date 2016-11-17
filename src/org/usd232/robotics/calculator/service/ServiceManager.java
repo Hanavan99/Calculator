@@ -16,7 +16,7 @@ public class ServiceManager {
 	
 	public static void init(Config cfg) {
 		ServiceManager.cfg = cfg;
-		service = new ServiceImpl(cfg);
+		service = new ServiceImpl();
 	}
 	
 	public static Config getConfig() {
