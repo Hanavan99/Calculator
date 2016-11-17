@@ -12,7 +12,7 @@ public class Main {
 		Config cfg;
 
 		if (args.length < 1) {
-			System.out.println("Assuming that you don't want to run with a GUI");
+			System.out.println("Not enough args; assuming that you don't want to run with a GUI");
 			cfg = new Config(false);
 		} else {
 			cfg = new Config(args[0].equals("graphics"));

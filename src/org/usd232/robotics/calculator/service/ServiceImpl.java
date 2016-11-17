@@ -25,6 +25,10 @@ public class ServiceImpl implements IService {
 				return args[0] + args[1];
 			case MULTIPLY:
 				return args[0] * args[1];
+			case DIVIDE:
+				return args[0] / args[1];
+			case SINE:
+				return Math.sin(args[0]);
 			default:
 				return 0;
 			}

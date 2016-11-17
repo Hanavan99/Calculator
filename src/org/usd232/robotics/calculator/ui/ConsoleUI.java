@@ -37,16 +37,28 @@ public class ConsoleUI implements IUI {
 						System.out.println("Did nothing");
 					}
 				} catch (NumberFormatException e) {
+					
 					if (o != null && !val1.equals("") && !val2.equals("")) {
-						total += ServiceManager.getService().calculate(o, Double.valueOf(val1), Double.valueOf(val2));
-						o = null;
-						val1 = "";
-						val2 = "";
-						System.out.println("Computed result");
+						calculate();
 					} else {
 						switch (subdata) {
+						case "=":
+							calculate();
+							break;
 						case "+":
 							o = Operand.ADD;
+							break;
+						case "-":
+							o = Operand.SUBTRACT;
+							break;
+						case "*":
+							o = Operand.MULTIPLY;
+							break;
+						case "/":
+							o = Operand.DIVIDE;
+							break;
+						case "sin":
+							o = Operand.SINE;
 							break;
 						}
 						System.out.println("Set operand");
@@ -54,16 +66,30 @@ public class ConsoleUI implements IUI {
 					
 				}
 			}
+			ServiceManager.getService().printResultToConsole(String.valueOf(total));
+			total = 0;
+			val1 = "";
+			val2 = "";
 		}
-		ServiceManager.getService().printResultToConsole(String.valueOf(total));
-		total = 0;
-		val1 = "";
-		val2 = "";
 	}
 
 	@Override
 	public void shutdown() {
 		
+	}
+	
+	private void calculate() {
+		if (val1.equals("")) {
+			val1 = "0";
+		}
+		if (val2.equals("")) {
+			val2 = "0";
+		}
+		total += ServiceManager.getService().calculate(o, Double.valueOf(val1), Double.valueOf(val2));
+		o = null;
+		val1 = "";
+		val2 = "";
+		System.out.println("Computed result");
 	}
 
 }
